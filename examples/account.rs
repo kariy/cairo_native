@@ -1,5 +1,5 @@
 use cairo_lang_compiler::CompilerConfig;
-use cairo_lang_starknet::contract_class::compile_path;
+use cairo_lang_starknet::contract_class::{compile_path, ContractClass};
 use cairo_native::{
     context::NativeContext,
     executor::JitNativeExecutor,
@@ -279,17 +279,8 @@ fn main() {
     )
     .unwrap();
 
-    let path = Path::new("programs/erc20.cairo");
-
-    let contract = compile_path(
-        path,
-        None,
-        CompilerConfig {
-            replace_ids: true,
-            ..Default::default()
-        },
-    )
-    .unwrap();
+    let json = include_str!("oz_account_080.json");
+    let contract: ContractClass = serde_json::from_str(json).unwrap();
 
     let entry_point = contract.entry_points_by_type.constructor.first().unwrap();
     let sierra_program = contract.extract_sierra_program().unwrap();
